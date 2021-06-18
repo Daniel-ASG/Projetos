@@ -47,9 +47,40 @@ else:
     data = data.copy()
 
 
-st.write(data.head())
+st.dataframe(data)
 
+c1, c2 = st.beta_columns((1,1))
+# Average metrics
+df1 = data[['id', 'zipcode']].groupby(by=['zipcode']).count().reset_index()
+df2 = data[['price', 'zipcode']].groupby('zipcode').mean().reset_index()
+df3 = data[['sqft_living', 'zipcode']].groupby('zipcode').mean().reset_index()
+df4 = data[['price_m2', 'zipcode']].groupby('zipcode').mean().reset_index()
 
+# merge 
+m1 = pd.merge(df1, df2, on='zipcode', how='inner')
+m2 = pd.merge(m1, df3, on='zipcode', how='inner')
+df   = pd.merge(m2, df4, on='zipcode', how='inner')
+
+df.columns = ['ZIPCODE', 'TOTAL_HOUSES', 'PRICES', 'SQFT_LIVING', 'PRICE/M2']
+
+c1.header('Averege Values')
+c1.dataframe(df, height=600)
+
+# Statistic Descriptive
+num_attributes = data.select_dtypes(include=['int64', 'float64'])
+
+media = pd.DataFrame(num_attributes.apply(np.mean))
+mediana = pd.DataFrame(num_attributes.apply(np.median))
+std = pd.DataFrame(num_attributes.apply(np.std))
+
+max_ = pd.DataFrame(num_attributes.apply(np.max))
+min_ = pd.DataFrame(num_attributes.apply(np.min))
+
+df1 = pd.concat([max_, min_, media, mediana, std], axis=1).reset_index()
+df1.columns = ['attributes', 'max', 'min', 'mean', 'median', 'std']
+
+c2.header('Descriptive Analysis')
+c2.dataframe(df1, height=900)
 
 # st.title('House Rocket Map')
 # is_check = st.checkbox('Display Map')
