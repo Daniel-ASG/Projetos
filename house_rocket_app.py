@@ -56,6 +56,7 @@ df2 = data[['price', 'zipcode']].groupby('zipcode').mean().reset_index()
 df3 = data[['sqft_living', 'zipcode']].groupby('zipcode').mean().reset_index()
 df4 = data[['price_m2', 'zipcode']].groupby('zipcode').mean().reset_index()
 
+
 # merge 
 m1 = pd.merge(df1, df2, on='zipcode', how='inner')
 m2 = pd.merge(m1, df3, on='zipcode', how='inner')
