@@ -233,11 +233,43 @@ st.plotly_chart(fig, use_container_width=True)
 st.sidebar.title('Attributes Options')
 st.title( 'House Attributes')
 
+# filters
+f_bedrooms = st.sidebar.selectbox('Max number of bedrooms', 
+    data.bedrooms.sort_values().unique())
+f_bathooms = st.sidebar.selectbox('Max number of bathrooms', 
+    data.bathrooms.sort_values().unique())
+c1, c2 = st.beta_columns(2)
+
 # House per bedrooms
+c1.header('Houses per bedrooms')
+df = data[data['bedrooms'] < f_bedrooms]
+fig = px.histogram(df, x='bedrooms', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
 
 # House per bathrooms
+c2.header('Houses per bathrooms')
+df = data[data.bathrooms < f_bathooms]
+fig = px.histogram(df, x='bathrooms', nbins=19)
+c2.plotly_chart(fig, use_container_width=True)
+
+
+
+# filters
+f_floors = st.sidebar.selectbox('Max number of floor',
+    data.floors.sort_values().unique())
+f_waterview = st.sidebar.checkbox('Only houses with water view')
+c1, c2 = st.beta_columns(2)
 
 # House per floors
+c1.header('Houses per floor')
+df = data[data.floors < f_floors]
+fig = px.histogram(df, x='floors', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
 
 # House per water view
-
+if f_waterview:
+    df = data[data.waterfront == 1]
+else:
+    df = data.copy()
+fig = px.histogram(df, x='waterfront', nbins=10)
+c2.plotly_chart(fig, use_container_width=True)
